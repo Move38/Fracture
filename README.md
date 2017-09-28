@@ -26,30 +26,33 @@ A competitive game towards diversity.
  *  9.28.2017
  */
 
-// set the 6 possible teams to be a part of
-// red, yellow, blue, green, orange, magenta
+// Global Vars
+	// set the 6 possible teams to be a part of
+	// team variables/colors: red, yellow, blue, green, orange, magenta
+	// variables for flashing: urge, period, duration
 
-// if button is triple clicked
-	// change team to next color team in list
+// Loop
+	// if button is triple clicked
+		// change team to next color team in list
 
-// if more than 1 neighbor present and none of the neighbors share my color
-	// set flag to flash in happy state
+	// if more than 1 neighbor present and none of the neighbors share my color
+		// set flag to flash in happy state
 
-// handle synchronous color flashing
+	// handle synchronous color flashing
 
-// update general urge (i.e. urge++)
+	// update general urge (i.e. urge++)
 
-// if neighbor flashes (i.e. state reflects a flash)
-	// broadcast the flash on IR (maybe only broadcast if not your color)
-	// if neighbor is my color
-		// update urge accordingly (+= urge/10)
+	// if neighbor flashes (i.e. state reflects a flash)
+		// broadcast the flash on IR (maybe only broadcast if not your color)
+		// if neighbor is my color
+			// update urge accordingly (+= urge/10)
 
-// if urge greater than threshold
-	// broadcast the flash message
+	// if urge greater than threshold
+		// broadcast the flash message
 
-// display solid or flashing
-// if flag for happy state satisfied
-	// display flash when urge to flash
-// else
-	// display solid color
+	// display solid or flashing
+	// if flag for happy state satisfied
+		// display flash when urge to flash
+	// else
+		// display solid color
 ```
