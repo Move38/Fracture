@@ -1,8 +1,8 @@
-#Fracture#
+# Fracture #
 
 A competitive game towards diversity.
 
-##Sudo Code for Game Implementation##
+## Sudo Code for Game Implementation ##
 
 ```C
 /*  Fracture (Game)
@@ -26,7 +26,7 @@ A competitive game towards diversity.
  *  9.28.2017
  */
 
-// set teh 6 possible teams to be a part of
+// set the 6 possible teams to be a part of
 // red, yellow, blue, green, orange, magenta
 
 // if button is triple clicked
@@ -36,10 +36,16 @@ A competitive game towards diversity.
 	// set flag to flash in happy state
 
 // handle synchronous color flashing
+
+// update general urge (i.e. urge++)
+
 // if neighbor flashes (i.e. state reflects a flash)
 	// broadcast the flash on IR (maybe only broadcast if not your color)
 	// if neighbor is my color
-		// update urge accordingly
+		// update urge accordingly (+= urge/10)
+
+// if urge greater than threshold
+	// broadcast the flash message
 
 // display solid or flashing
 // if flag for happy state satisfied
