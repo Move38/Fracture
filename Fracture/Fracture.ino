@@ -59,7 +59,25 @@ void loop() {
    * If neighbor changed, evaluate our state
    */
   if(neighborChanged) {
-    
+
+    int numNeighbors = 0;
+    bool neighborOnSameTeam = false;
+    for(int i=0; i<6; i++) {
+      if(getNeighbor(i) != 0) {
+        numNeighbors++;
+      }
+      if(getNeighbor(i) == team) {
+        neighborOnSameTeam = true;
+      }
+    }
+
+    // if number of neighbors is greater than 2 and no neighbor is on our team, we are satisfied
+    if(numNeighbors >= 2 && !neighborOnSameTeam) {
+      isSatisfied = true;
+    }
+    else {
+      isSatisfied = false;
+    }
   }
 
   /*
@@ -81,11 +99,13 @@ void loop() {
        timeSinceTicked < blinkStartTime + blinkDuration) {
       
       setColor(teamColors[team-1]);  // flash team color
-    
-    } else {
-
+    } 
+    else {
       setColor(OFF); // dark portion of blinking
-      
     }
   } // end of satisfied behavior
+  else {
+    // show team color
+    setColor(teamColors[team-1]);
+  }
 }
