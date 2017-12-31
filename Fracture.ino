@@ -39,7 +39,7 @@ void setup() {
 }
 
 void loop() {
-  
+
   // change team if triple clicked
   if (buttonMultiClicked()) {
     if (buttonClickCount() == 3) {
@@ -55,7 +55,7 @@ void loop() {
   // look at neighbors
   FOREACH_FACE(f) {
     byte neighbor = getNeighborState(f);
-    if(neighbor > numTeams) { // using values above num teams to pass sync info
+    if (neighbor > numTeams) { // using values above num teams to pass sync info
       neighbor -= numTeams;
     }
     // count them
@@ -65,7 +65,7 @@ void loop() {
 
     // if their color is the same as mine... not happy
     byte myState = getState();
-    if(myState > numTeams){
+    if (myState > numTeams) {
       myState -= numTeams;
     }
     if (neighbor == myState) {
@@ -85,9 +85,16 @@ void loop() {
     int blinkTiming = (urge + (myTeam * urgeThreshold / numTeams)) % urgeThreshold;
     if (blinkTiming < urgeThreshold / numTeams) {
       setColor(teamColors[myTeam]);
-      // ring of happiness
-      int face = 6 * numTeams * blinkTiming / urgeThreshold;
-      setFaceColor(face, WHITE);
+
+      if (blinkTiming < urgeThreshold / (2 * numTeams)) {
+        // blink off before ring of happiness
+        setColor(OFF);
+      }
+      else {
+        // ring of happiness
+        int face = 6 * numTeams * (blinkTiming - urgeThreshold / (2 * numTeams)) / (urgeThreshold / 2);
+        setFaceColor(face, WHITE);
+      }
     }
     else {
       setColor(teamColors[myTeam]);
@@ -120,9 +127,9 @@ void updateSync() {
 
     if ( urge >= urgeThreshold ) {
       setState(myTeam + numTeams);  // Flash to neighbors! (actual value sent does not matter)
-//      setFaceColor(0,WHITE);
-//      setFaceColor(2,WHITE);
-//      setFaceColor(4,WHITE);
+      //      setFaceColor(0,WHITE);
+      //      setFaceColor(2,WHITE);
+      //      setFaceColor(4,WHITE);
       urge = 0;
     } else {
       setState(myTeam);
