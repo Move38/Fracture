@@ -1,111 +1,87 @@
 /*
- * Fracture
- * 
- * Game rules
- * 
- * Game Featues
- * - Game board flashes in the color of the player whose turn it is
- * - Game board synchronizes color flashing showing player's progress
- * - Game board celebrates winner with entire board changing to winner color and performing a light show
- * - Game board goes to sleep after 5 minutes of no active play. Game board wakes with a single press.
- * 
- * Wanted features
- * - Game board determines the correct amount of each color on reset
- *   - i.e. 
- *   - 12 Blinks results in 4 Red, 4 Blue, 4 Yellow 
- *   - 15 Blinks results in 5 Red, 5 Blue, 5 Yellow
- *   - 16 Blinks results in 4 Red, 4 Blue, 4 Yellow, 4 Green 
- * - Game board signals ready for start of game when in the correct conformation
- *   - conformation is dependent on the number of Blinks
- * 
- */
+   Fracture Simple
+
+   Game rules
+
+   Blinks blink when touching at least 2 other Blinks
+   and not touching any of our own team
+
+   Coding by
+   Jonathan Bobrow (& Jamie Tsukamaki)
+   12.30.17
+*/
 
 #include "blinklib.h"
 #include "blinkstate.h"
 
-byte team = 1;
-byte numTeams = 4;
-bool teamDidChange = false;
-bool isSatisfied = false;
-int blinkDuration = 200;
-int period = 1000;
-int timeLastTicked = 0;
+Color displayColor;
 
-Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
+Color teamColors[] = {WHITE, RED, BLUE, YELLOW, GREEN};
+
+enum Team {
+  TEAM_RED = 1,
+  TEAM_BLUE = 2,
+  TEAM_YELLOW = 3,
+  TEAM_GREEN = 4
+};
 
 void setup() {
-
-  setState(1);          // show presence
-  setMetronome(period); // synchonized actions on board
+  setTeam(TEAM_RED);
 }
 
 void loop() {
-
-  if(buttonDoubleClicked) {
-    // change team
-    team = team % numTeams + 1; // returns value between 1 and numTeams+1
-    teamDidChange = true;
+  // change team if triple clicked
+  if (buttonMultiClicked()) {
+    if (buttonClickCount() == 3) {
+      int newTeam = getState() % 4 + 1;
+      setTeam(newTeam);
+    }
   }
 
-  /*
-   *  Update our color based on the team we are on 
-   */
-  if(teamDidChange) {
-    setColor(teamColors[team-1];  // update display color
-    teamDidChange = false;
-  }
+  int numNeighbors = 0;
+  bool noNeighborsOfSameColor = true;
+  bool isHappy = false;
 
-  /*
-   * If neighbor changed, evaluate our state
-   */
-  if(neighborChanged) {
-
-    int numNeighbors = 0;
-    bool neighborOnSameTeam = false;
-    for(int i=0; i<6; i++) {
-      if(getNeighbor(i) != 0) {
-        numNeighbors++;
-      }
-      if(getNeighbor(i) == team) {
-        neighborOnSameTeam = true;
-      }
+  // look at neighbors
+  FOREACH_FACE(f) {
+    byte neighbor = getNeighborState(f);
+    // count them
+    if (neighbor != 0) {
+      numNeighbors = numNeighbors + 1;
     }
 
-    // if number of neighbors is greater than 2 and no neighbor is on our team, we are satisfied
-    if(numNeighbors >= 2 && !neighborOnSameTeam) {
-      isSatisfied = true;
+    // if their color is the same as mine... not happy
+    if (neighbor == getState()) {
+      noNeighborsOfSameColor = false;
+    }
+  }
+
+  // if I have two neighbors or more and my neighbors are not my color i'm happy
+  if (numNeighbors >= 2 && noNeighborsOfSameColor) {
+    isHappy = true;
+  }
+
+
+  // if I'm happy
+  if (isHappy) {
+    // blink in my team color
+    if (millis() % 1000 > 500) {
+      setColor(teamColors[getState()]);
     }
     else {
-      isSatisfied = false;
+      setColor(OFF);
     }
   }
-
-  /*
-   *  Flash in unison with team
-   */
-  if(isSatisfied) { 
-
-    if(tickDidHappen){
-    
-      timeLastTicked = millis();
-    
-    }
-
-    // blink in a time window with our team
-    int timeSinceTicked = millis() - timeLastTicked;
-    int blinkStartTime = (team - 1) * period / numTeams;
-    
-    if(timeSinceTicked > blinkStartTime && 
-       timeSinceTicked < blinkStartTime + blinkDuration) {
-      
-      setColor(teamColors[team-1]);  // flash team color
-    } 
-    else {
-      setColor(OFF); // dark portion of blinking
-    }
-  } // end of satisfied behavior
   else {
-    // show team color
-    setColor(teamColors[team-1]);
+    // if I'm not happy
+    // glow my team color solid
+    setColor(teamColors[getState()]);
   }
+
 }
+
+void setTeam(int t) {
+  setState(t);
+  setColor(teamColors[t]);
+}
+
