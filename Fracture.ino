@@ -85,9 +85,12 @@ void loop() {
     int blinkTiming = (urge + (myTeam * urgeThreshold / numTeams)) % urgeThreshold;
     if (blinkTiming < urgeThreshold / numTeams) {
       setColor(teamColors[myTeam]);
+      // ring of happiness
+      int face = 6 * numTeams * blinkTiming / urgeThreshold;
+      setFaceColor(face, WHITE);
     }
     else {
-      setColor(OFF);
+      setColor(teamColors[myTeam]);
     }
   }
   else {
