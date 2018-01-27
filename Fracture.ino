@@ -16,7 +16,6 @@
 
 #include "blinklib.h"
 #include "blinkstate.h"
-#include "blinkani.h"
 
 unsigned urge = 0;
 unsigned urgeThreshold = 100;
@@ -36,6 +35,7 @@ enum Team {
 
 void setup() {
   setTeam(TEAM_RED);
+  blinkStateBegin();
 }
 
 void loop() {
@@ -43,7 +43,7 @@ void loop() {
   // change team if triple clicked
   if (buttonMultiClicked()) {
     if (buttonClickCount() == 3) {
-      int newTeam = getState() % 4 + 1;
+      int newTeam = getFaceState(0) % 4 + 1;
       setTeam(newTeam);
     }
   }
@@ -64,7 +64,7 @@ void loop() {
     }
 
     // if their color is the same as mine... not happy
-    byte myState = getState();
+    byte myState = getFaceState(0);
     if (myState > numTeams) {
       myState -= numTeams;
     }
