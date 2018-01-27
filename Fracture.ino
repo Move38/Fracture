@@ -16,57 +16,54 @@
 
 Color displayColor;
 
-Color teamColors[] = {WHITE, RED, BLUE, YELLOW, GREEN};
+Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
 
-enum Team {
-  TEAM_RED = 1,
-  TEAM_BLUE = 2,
-  TEAM_YELLOW = 3,
-  TEAM_GREEN = 4
-};
+byte teamIndex = 0;
 
 void setup() {
-  setTeam(TEAM_RED);
+  blinkStateBegin();
 }
 
 void loop() {
+  
   // change team if triple clicked
   if (buttonMultiClicked()) {
     if (buttonClickCount() == 3) {
-      int newTeam = getState() % 4 + 1;
-      setTeam(newTeam);
+      teamIndex++;
+      if(teamIndex>= COUNT_OF(teamColors)) {
+        teamIndex = 0;      
+      }
     }
   }
 
-  int numNeighbors = 0;
+  byte numNeighbors = 0;
   bool noNeighborsOfSameColor = true;
-  bool isHappy = false;
 
   // look at neighbors
   FOREACH_FACE(f) {
-    byte neighbor = getNeighborState(f);
-    // count them
-    if (neighbor != 0) {
-      numNeighbors = numNeighbors + 1;
-    }
-
-    // if their color is the same as mine... not happy
-    if (neighbor == getState()) {
-      noNeighborsOfSameColor = false;
+    if(!isNeighborExpired(f)) {
+      
+      numNeighbors++;
+    
+      // if their color is the same as mine... not happy
+      if (getNeighborState(f) == teamIndex) {
+        noNeighborsOfSameColor = false;
+      }
     }
   }
 
+  bool isHappy = false;
+  
   // if I have two neighbors or more and my neighbors are not my color i'm happy
   if (numNeighbors >= 2 && noNeighborsOfSameColor) {
     isHappy = true;
   }
 
-
   // if I'm happy
   if (isHappy) {
     // blink in my team color
     if (millis() % 1000 > 500) {
-      setColor(teamColors[getState()]);
+      setColor(teamColors[teamIndex]);
     }
     else {
       setColor(OFF);
@@ -75,13 +72,8 @@ void loop() {
   else {
     // if I'm not happy
     // glow my team color solid
-    setColor(teamColors[getState()]);
+    setColor(teamColors[teamIndex]);
   }
 
+  setState(teamIndex);
 }
-
-void setTeam(int t) {
-  setState(t);
-  setColor(teamColors[t]);
-}
-
