@@ -8,11 +8,10 @@
 
    Coding by
    Jonathan Bobrow (& Jamie Tsukamaki)
-   12.30.17
+   2.1.18
 */
 
-#include "blinklib.h"
-#include "blinkstate.h"
+#define HAPPY_FLASH_DURATION 500
 
 Color displayColor;
 
@@ -20,8 +19,10 @@ Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
 
 byte teamIndex = 0;
 
+Timer happyFlashTimer;
+bool happyFlashOn;
+
 void setup() {
-  blinkStateBegin();
 }
 
 void loop() {
@@ -41,12 +42,12 @@ void loop() {
 
   // look at neighbors
   FOREACH_FACE(f) {
-    if(!isNeighborExpired(f)) {
+    if(!isValueReceivedOnFaceExpired(f)) {
       
       numNeighbors++;
     
       // if their color is the same as mine... not happy
-      if (getNeighborState(f) == teamIndex) {
+      if (getLastValueReceivedOnFace(f) == teamIndex) {
         noNeighborsOfSameColor = false;
       }
     }
@@ -59,21 +60,28 @@ void loop() {
     isHappy = true;
   }
 
+  bool isOn = true;
+  
   // if I'm happy
   if (isHappy) {
-    // blink in my team color
-    if (millis() % 1000 > 500) {
-      setColor(teamColors[teamIndex]);
+
+    if(happyFlashTimer.isExpired()) {
+      happyFlashOn = !happyFlashOn;
+      
+      happyFlashTimer.set(HAPPY_FLASH_DURATION);
     }
-    else {
-      setColor(OFF);
+    
+    if(!happyFlashOn) {
+      isOn = false;
     }
-  }
-  else {
-    // if I'm not happy
-    // glow my team color solid
-    setColor(teamColors[teamIndex]);
   }
 
-  setState(teamIndex);
+  if(isOn) {
+    setColor(teamColors[teamIndex]);
+  }
+  else {
+    setColor(OFF);
+  }
+
+  setValueSentOnAllFaces(teamIndex);
 }
