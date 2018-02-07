@@ -1,118 +1,130 @@
 /*
-   Fracture Simple - Sync
+   Fracture Simple
 
    Game rules
 
    Blinks blink when touching at least 2 other Blinks
    and not touching any of our own team
 
-   Flash the team colors in sync with themselves,
-   out of sync with other team colors
-
    Coding by
    Jonathan Bobrow (& Jamie Tsukamaki)
-   12.30.17
+   2.1.18
 */
 
-#include "blinklib.h"
-#include "blinkstate.h"
+#define HAPPY_FLASH_DURATION 500
+#define URGE_THRESHOLD       100
+#define NUM_TEAMS            4
 
-unsigned urge = 0;
-unsigned urgeThreshold = 100;
+uint16_t urge = 0;
 uint32_t lastSyncTime = 0;
 
-int numTeams = 4;
-int myTeam;
+Color displayColor;
 
-Color teamColors[] = {WHITE, RED, BLUE, YELLOW, GREEN};
+Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
 
-enum Team {
-  TEAM_RED = 1,
-  TEAM_BLUE = 2,
-  TEAM_YELLOW = 3,
-  TEAM_GREEN = 4
-};
+byte teamIndex = 0;
+
+Timer happyFlashTimer;
+bool happyFlashOn;
 
 void setup() {
-  setTeam(TEAM_RED);
-  blinkStateBegin();
 }
 
 void loop() {
-
+  
   // change team if triple clicked
   if (buttonMultiClicked()) {
     if (buttonClickCount() == 3) {
-      int newTeam = getFaceState(0) % 4 + 1;
-      setTeam(newTeam);
+      teamIndex++;
+      if(teamIndex>= COUNT_OF(teamColors)) {
+        teamIndex = 0;      
+      }
     }
   }
 
-  int numNeighbors = 0;
+  byte numNeighbors = 0;
   bool noNeighborsOfSameColor = true;
-  bool isHappy = false;
 
   // look at neighbors
   FOREACH_FACE(f) {
-    byte neighbor = getNeighborState(f);
-    if (neighbor > numTeams) { // using values above num teams to pass sync info
-      neighbor -= numTeams;
-    }
-    // count them
-    if (neighbor != 0) {
-      numNeighbors = numNeighbors + 1;
-    }
+    if(!isValueReceivedOnFaceExpired(f)) {
+      
+      numNeighbors++;
 
-    // if their color is the same as mine... not happy
-    byte myState = getFaceState(0);
-    if (myState > numTeams) {
-      myState -= numTeams;
-    }
-    if (neighbor == myState) {
-      noNeighborsOfSameColor = false;
+      byte neighborValue = getLastValueReceivedOnFace(f);
+
+      // reduce to team index
+      while(neighborValue > NUM_TEAMS) {
+        neighborValue -= NUM_TEAMS;
+      }
+      
+      // if their color is the same as mine... not happy
+      if (neighborValue == teamIndex) {
+        noNeighborsOfSameColor = false;
+      }
     }
   }
 
+  bool isHappy = false;
+  
   // if I have two neighbors or more and my neighbors are not my color i'm happy
   if (numNeighbors >= 2 && noNeighborsOfSameColor) {
     isHappy = true;
   }
 
-
+  bool isOn = true;
+  
   // if I'm happy
+//  if (isHappy) {
+//
+//    if(happyFlashTimer.isExpired()) {
+//      happyFlashOn = !happyFlashOn;
+//      
+//      happyFlashTimer.set(HAPPY_FLASH_DURATION);
+//    }
+//    
+//    if(!happyFlashOn) {
+//      isOn = false;
+//    }
+//  }
+//
+//  if(isOn) {
+//    setColor(teamColors[teamIndex]);
+//  }
+//  else {
+//    setColor(OFF);
+//  }
+
+// if I'm happy
   if (isHappy) {
     // blink in my team color
-    int blinkTiming = (urge + (myTeam * urgeThreshold / numTeams)) % urgeThreshold;
-    if (blinkTiming < urgeThreshold / numTeams) {
-      setColor(teamColors[myTeam]);
+    int blinkTiming = (urge + (teamIndex * URGE_THRESHOLD / NUM_TEAMS)) % URGE_THRESHOLD;
+    if (blinkTiming < URGE_THRESHOLD / NUM_TEAMS) {
+      setColor(teamColors[teamIndex]);
 
-      if (blinkTiming < urgeThreshold / (2 * numTeams)) {
+      if (blinkTiming < URGE_THRESHOLD / (2 * NUM_TEAMS)) {
         // blink off before ring of happiness
         setColor(OFF);
       }
       else {
         // ring of happiness
-        int face = 6 * numTeams * (blinkTiming - urgeThreshold / (2 * numTeams)) / (urgeThreshold / 2);
+        int face = 6 * NUM_TEAMS * (blinkTiming - URGE_THRESHOLD / (2 * NUM_TEAMS)) / (URGE_THRESHOLD / 2);
         setFaceColor(face, WHITE);
       }
     }
     else {
-      setColor(teamColors[myTeam]);
+      setColor(teamColors[teamIndex]);
     }
   }
   else {
     // if I'm not happy
     // glow my team color solid
-    setColor(teamColors[myTeam]);
+    setColor(teamColors[teamIndex]);
   }
+  
+  setValueSentOnAllFaces(teamIndex);
 
   updateSync();
-}
-
-void setTeam(int t) {
-  myTeam = t;
-  setState(myTeam);
-  setColor(teamColors[myTeam]);
 }
 
 void updateSync() {
@@ -125,20 +137,22 @@ void updateSync() {
 
     // Until we can't take it any more!...
 
-    if ( urge >= urgeThreshold ) {
-      setState(myTeam + numTeams);  // Flash to neighbors! (actual value sent does not matter)
+    if ( urge >= URGE_THRESHOLD ) {
+      setValueSentOnAllFaces(teamIndex + NUM_TEAMS);  // Flash to neighbors! (actual value sent does not matter)
       //      setFaceColor(0,WHITE);
       //      setFaceColor(2,WHITE);
       //      setFaceColor(4,WHITE);
       urge = 0;
     } else {
-      setState(myTeam);
+      setValueSentOnAllFaces(teamIndex);
     }
 
     // See what our neighbors are up to....
     FOREACH_FACE(face) {
-      if (getNeighborState(face) > numTeams) {
-        urge += (urge / 10);
+      if(!isValueReceivedOnFaceExpired(face)) {
+        if (getLastValueReceivedOnFace(face) > NUM_TEAMS) {
+          urge += (urge / 10);
+        }
       }
     }
     lastSyncTime = curTime;
