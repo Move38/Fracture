@@ -17,7 +17,7 @@ Color displayColor;
 
 Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
 
-byte teamIndex = 0;
+byte teamIndex = 2;
 
 Timer happyFlashTimer;
 bool happyFlashOn;
@@ -77,7 +77,7 @@ void loop() {
   }
 
   if(isOn) {
-    setColor(teamColors[teamIndex]);
+    setColor(dim(teamColors[teamIndex], 220 + 35 * sin_d( (millis()/10) % 360)));
   }
   else {
     setColor(OFF);
@@ -85,3 +85,13 @@ void loop() {
 
   setValueSentOnAllFaces(teamIndex);
 }
+
+
+// Sin in degrees ( standard sin() takes radians )
+
+float sin_d( uint16_t degrees ) {
+
+    return sin( ( degrees / 360.0F ) * 2.0F * PI   );
+}
+
+
