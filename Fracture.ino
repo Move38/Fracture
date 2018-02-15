@@ -22,6 +22,16 @@ byte teamIndex = 2;
 Timer happyFlashTimer;
 bool happyFlashOn;
 
+
+
+// Sin in degrees ( standard sin() takes radians )
+
+float sin_d( uint16_t degrees ) {
+
+    return sin( ( degrees / 360.0F ) * 2.0F * PI   );
+}
+
+
 void setup() {
 }
 
@@ -84,14 +94,6 @@ void loop() {
   }
 
   setValueSentOnAllFaces(teamIndex);
-}
-
-
-// Sin in degrees ( standard sin() takes radians )
-
-float sin_d( uint16_t degrees ) {
-
-    return sin( ( degrees / 360.0F ) * 2.0F * PI   );
 }
 
 
