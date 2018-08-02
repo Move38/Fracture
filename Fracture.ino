@@ -1,15 +1,23 @@
-/*
-   Fracture Simple
-
-   Game rules
-
-   Blinks blink when touching at least 2 other Blinks
-   and not touching any of our own team
-
-   Coding by
-   Jonathan Bobrow (& Jamie Tsukamaki)
-   2.1.18
-*/
+/*  Fracture (Game)
+ *  
+ *  Setup: For 3-6 players. Each player gets 5-6 tiles of a specific color.
+ *         Game starts will all tiles connected, but completely segregated by color.
+ *
+ *  Goal: Get your tiles to be touching only other players tiles.
+ *        Your tiles must be touching at least two other tiles to feel happily diverse.
+ *
+ *  Turns: Start from a player of choice and then go clockwise taking turns.
+ *         A turn consists of fracturing the population into two sub populations,
+ *         and then connecting them back together in any way you please.
+ *  
+ *  When a player has a tile fully diversified, it will blink in unison with other blinking Blinks of its color,
+ *  first player to have all of their tiles blink wins. 
+ *
+ *  Game devopment by: Celia Pearce, Jeanie Choi, Isabella Carlson, Mike Lazer-Walker, Joshua Sloane
+ *
+ *  by Jonathan Bobrow
+ *  9.28.2017
+ */
 
 #define HAPPY_FLASH_DURATION 500
 
@@ -17,7 +25,7 @@ Color displayColor;
 
 Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
 
-byte teamIndex = 2;
+byte teamIndex = 0;
 
 Timer happyFlashTimer;
 bool happyFlashOn;
@@ -77,7 +85,9 @@ void loop() {
   }
 
   if(isOn) {
-    setColor(dim(teamColors[teamIndex], 220 + 35 * sin_d( (millis()/10) % 360)));
+    // have the color on the Blink raise and lower to feel more alive
+    byte bri = 220 + 35 * sin_d( (millis()/10) % 360)); // oscillate between values 185 and 255
+    setColor(dim(teamColors[teamIndex], bri);
   }
   else {
     setColor(OFF);
