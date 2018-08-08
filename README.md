@@ -2,7 +2,7 @@
 
 A competitive game towards diversity.
 
-[Game Instructions] (https://github.com/IdesOfJune/Fracture/blob/master/instructions.md)
+[Game Instructions](https://github.com/IdesOfJune/Fracture/blob/master/instructions.md)
 
 ## Sudo Code for Game Implementation ##
 
