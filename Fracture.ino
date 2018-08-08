@@ -13,7 +13,7 @@
  *  When a player has a tile fully diversified, it will blink in unison with other blinking Blinks of its color,
  *  first player to have all of their tiles blink wins. 
  *
- *  Game devopment by: Celia Pearce, Jeanie Choi, Isabella Carlson, Mike Lazer-Walker, Joshua Sloane
+ *  Game development by: Celia Pearce, Jeanie Choi, Isabella Carlson, Mike Lazer-Walker, Joshua Sloane
  *
  *  by Jonathan Bobrow
  *  9.28.2017
@@ -86,8 +86,8 @@ void loop() {
 
   if(isOn) {
     // have the color on the Blink raise and lower to feel more alive
-    byte bri = 220 + 35 * sin_d( (millis()/10) % 360)); // oscillate between values 185 and 255
-    setColor(dim(teamColors[teamIndex], bri);
+    byte bri = 220 + 35 * sin_d( (millis()/10) % 360); // oscillate between values 185 and 255
+    setColor(dim(teamColors[teamIndex], bri));
   }
   else {
     setColor(OFF);
@@ -103,5 +103,3 @@ float sin_d( uint16_t degrees ) {
 
     return sin( ( degrees / 360.0F ) * 2.0F * PI   );
 }
-
-
