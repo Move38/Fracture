@@ -25,6 +25,7 @@ One limitation a player has on their turn is that they cannot make a fracture th
 ### Animation States
 
 Normal -- the Blink will display its color (either blue, yellow, green, red). This is the default state. 
+
 Blinking -- the Blink repeatedly turns on/off. Getting all your Blinks in this state wins you the game. This occurs when the Blink is touching at least two other Blinks and none of the Blinks it is touching is of the same color. 
 
 ### Interactions
