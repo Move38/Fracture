@@ -1,60 +1,19 @@
-# Fracture #
+# Fracture
+###### by Celia Pearce, Jeanie Choi, Isabella Carlson, Mike Lazer-Walker, Joshua Sloane and Jonathan Bobrow
 
-A competitive game towards diversity.
+_INSERT GIF OF GAMEPLAY_
+  
+| Number of Blinks | Number of Players | Duration of Gameplay | Recommended Ages |
+|------------------|:-----------------:|:--------------------:|-----------------:|
+| 12+               | 3 (or more)      |  10 - 30 minutes     | 12 & Up          |
 
+## Objective
+A population divided. Your goal is to make your Blinks connected to the community and surrounded by diversity. (touch at least 2 other Blinks and none of your own color). It's a competitive game towards diversity.
+
+Want to play a cooperative version, it's for advanced players, and quite the collaborative puzzle!
+
+## Setup
+Arrange the Blinks so that each color is segregated. Make the board as radially symmetric as possible (this works perfectly for games with 2, 3, or 6 players, and you can get creative for games with 4 or 5 players.
+
+## Gameplay
 [Game Instructions](https://github.com/IdesOfJune/Fracture/blob/master/instructions.md)
-
-## Sudo Code for Game Implementation ##
-
-```C
-/*  Fracture (Game)
- *  
- *  Setup: For 3-6 players. Each player gets 5-6 tiles of a specific color.
- *         Game starts will all tiles connected, but completely segregated by color.
- *
- *  Goal: Get your tiles to be touching only other players tiles.
- *        Your tiles must be touching at least two other tiles to feel happily diverse.
- *
- *  Turns: Start from a player of choice and then go clockwise taking turns.
- *         A turn consists of fracturing the population into two sub populations,
- *         and then connecting them back together in any way you please.
- *  
- *  When a player has a tile fully diversified, it will blink in unison with other blinking Blinks of its color,
- *  first player to have all of their tiles blink wins. 
- *
- *  Game devopment by: Celia Pearce, Jeanie Choi, Isabella Carlson, Mike Lazer-Walker, Joshua Sloane
- *
- *  by Jonathan Bobrow
- *  9.28.2017
- */
-
-// Global Vars
-	// set the 6 possible teams to be a part of
-	// team variables/colors: red, yellow, blue, green, orange, magenta
-	// variables for flashing: urge, period, duration
-
-// Loop
-	// if button is triple clicked
-		// change team to next color team in list
-
-	// if more than 1 neighbor present and none of the neighbors share my color
-		// set flag to flash in happy state
-
-	// handle synchronous color flashing
-
-	// update general urge (i.e. urge++)
-
-	// if neighbor flashes (i.e. state reflects a flash)
-		// broadcast the flash on IR (maybe only broadcast if not your color)
-		// if neighbor is my color
-			// update urge accordingly (+= urge/10)
-
-	// if urge greater than threshold
-		// broadcast the flash message
-
-	// display solid or flashing
-	// if flag for happy state satisfied
-		// display flash when urge to flash
-	// else
-		// display solid color
-```
