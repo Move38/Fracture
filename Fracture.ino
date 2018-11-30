@@ -93,6 +93,10 @@ void loop() {
     setColor(OFF);
   }
 
+  // display fracture animation or mend animation
+  // if we just lost a neighbor fade up from dark
+  // if we just gained a neighbor saturate from white
+
   setValueSentOnAllFaces(teamIndex);
 }
 
