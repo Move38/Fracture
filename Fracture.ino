@@ -88,20 +88,45 @@ void loop() {
     isHappy = true;
   }
 
-  bool isOn = true;
-
   // if I'm happy
   if (isHappy) {
+    displayHappy();
+  }
+  else {
+    displayNotHappy();
+  }
 
-    if (happyFlashTimer.isExpired()) {
-      happyFlashOn = !happyFlashOn;
-
-      happyFlashTimer.set(HAPPY_FLASH_DURATION);
+  // display fracture animation or mend animation
+  FOREACH_FACE(f) {
+    if (!edgeTimer[f].isExpired()) {
+      if (edgeAcquired) {
+        // if we just gained a neighbor saturate from white
+        byte sat = 255 - (255 * edgeTimer[f].getRemaining() ) / EDGE_FADE_DURAION;
+        setColorOnFace(makeColorHSB(teamHues[teamIndex], sat, 255), f);
+      }
+      else {
+        // if we just lost a neighbor fade up from dark
+        byte bri = 255 - (255 * edgeTimer[f].getRemaining() ) / EDGE_FADE_DURAION;
+        setColorOnFace(makeColorHSB(teamHues[teamIndex], 255, bri), f);
+      }
     }
+  }
 
-    if (!happyFlashOn) {
-      isOn = false;
-    }
+  setValueSentOnAllFaces(teamIndex);
+}
+
+void displayHappy() {
+
+  bool isOn = true;
+
+  if (happyFlashTimer.isExpired()) {
+    happyFlashOn = !happyFlashOn;
+
+    happyFlashTimer.set(HAPPY_FLASH_DURATION);
+  }
+
+  if (!happyFlashOn) {
+    isOn = false;
   }
 
   if (isOn) {
@@ -113,23 +138,12 @@ void loop() {
     setColor(OFF);
   }
 
-  // display fracture animation or mend animation
-  FOREACH_FACE(f) {
-    if (!edgeTimer[f].isExpired()) {
-      if (edgeAcquired) {
-        // if we just gained a neighbor saturate from white
-        byte sat = 255 - (255 * edgeTimer[f].getRemaining() )/ EDGE_FADE_DURAION;
-        setColorOnFace(makeColorHSB(teamHues[teamIndex], sat, 255), f);
-      }
-      else {
-        // if we just lost a neighbor fade up from dark
-        byte bri = 255 - (255 * edgeTimer[f].getRemaining() )/ EDGE_FADE_DURAION;
-        setColorOnFace(makeColorHSB(teamHues[teamIndex], 255, bri), f);
-      }
-    }
-  }
+}
 
-  setValueSentOnAllFaces(teamIndex);
+void displayNotHappy() {
+  // have the color on the Blink raise and lower to feel more alive
+  byte bri = 220 + 35 * sin_d( (millis() / 10) % 360); // oscillate between values 185 and 255
+  setColor(dim(getColorForTeam(teamIndex), bri));
 }
 
 
