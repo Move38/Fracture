@@ -19,8 +19,11 @@
     9.28.2017
 */
 
-#define HAPPY_FLASH_DURATION 500
-#define EDGE_FADE_DURAION    500
+#define HAPPY_FLASH_DURATION    500
+#define EDGE_FADE_DURAION       500
+#define SPARKLE_OFFSET          80
+#define SPARKLE_DURATION        800
+#define SPARKLE_CYCLE_DURATION  2400
 
 Color displayColor;
 
@@ -31,6 +34,8 @@ byte teamIndex = 0;
 
 Timer happyFlashTimer;
 bool happyFlashOn;
+
+byte sparkleOffset[6] = {0, 3, 5, 1, 4, 2};
 
 Timer edgeTimer[6];
 bool  edgeAcquired;
@@ -117,25 +122,45 @@ void loop() {
 
 void displayHappy() {
 
-  bool isOn = true;
+  // have the color on the Blink raise and lower to feel more alive
+  byte bri = 220 + 35 * sin_d( (millis() / 10) % 360); // oscillate between values 185 and 255
+  setColor(dim(getColorForTeam(teamIndex), bri));
 
-  if (happyFlashTimer.isExpired()) {
-    happyFlashOn = !happyFlashOn;
+  // lets do a celebration on each face in an order
+  word delta = millis() % SPARKLE_CYCLE_DURATION; // 2 second cycle
 
-    happyFlashTimer.set(HAPPY_FLASH_DURATION);
+  if (delta > SPARKLE_DURATION) {
+    delta = SPARKLE_DURATION;
   }
 
-  if (!happyFlashOn) {
-    isOn = false;
-  }
+  FOREACH_FACE(f) {
 
-  if (isOn) {
-    // have the color on the Blink raise and lower to feel more alive
-    byte bri = 220 + 35 * sin_d( (millis() / 10) % 360); // oscillate between values 185 and 255
-    setColor(dim(getColorForTeam(teamIndex), bri));
-  }
-  else {
-    setColor(OFF);
+    // if the face has started it's glow
+    uint16_t sparkleStart = sparkleOffset[f] * SPARKLE_OFFSET;
+    uint16_t sparkleEnd = sparkleStart + SPARKLE_DURATION - (6 * SPARKLE_OFFSET);
+
+    if ( delta > sparkleStart ) {
+      // minimum of 125, maximum of 255
+      word phaseShift = 60 * f;
+      byte amplitude = 55;
+      byte midline = 185;
+      byte rate = 4;
+      byte lowBri = midline + (amplitude * sin_d( (phaseShift + millis() / rate) % 360) / 100);
+      byte brightness;
+      byte saturation;
+
+      if ( delta < sparkleEnd ) {
+        brightness = map(delta, sparkleStart, sparkleStart + SPARKLE_DURATION - (6 * SPARKLE_OFFSET), 255, lowBri);
+        saturation = map(delta, sparkleStart, sparkleStart + SPARKLE_DURATION - (6 * SPARKLE_OFFSET), 0, 255);
+      }
+      else {
+        //brightness = lowBri;
+        saturation = 255;
+      }
+
+      Color faceColor = makeColorHSB(teamHues[teamIndex], saturation, 255);
+      setColorOnFace(faceColor, f);
+    }
   }
 
 }
