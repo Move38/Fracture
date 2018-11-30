@@ -23,7 +23,8 @@
 
 Color displayColor;
 
-Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
+//Color teamColors[] = {RED, BLUE, YELLOW, GREEN};
+byte teamHues[6] = {22, 49, 82, 99, 160, 200};
 
 byte teamIndex = 0;
 
@@ -39,7 +40,7 @@ void loop() {
   if (buttonMultiClicked()) {
     if (buttonClickCount() == 3) {
       teamIndex++;
-      if(teamIndex>= COUNT_OF(teamColors)) {
+      if(teamIndex>= COUNT_OF(teamHues)) {
         teamIndex = 0;      
       }
     }
@@ -87,7 +88,7 @@ void loop() {
   if(isOn) {
     // have the color on the Blink raise and lower to feel more alive
     byte bri = 220 + 35 * sin_d( (millis()/10) % 360); // oscillate between values 185 and 255
-    setColor(dim(teamColors[teamIndex], bri));
+    setColor(dim(getColorForTeam(teamIndex), bri));
   }
   else {
     setColor(OFF);
@@ -98,6 +99,10 @@ void loop() {
   // if we just gained a neighbor saturate from white
 
   setValueSentOnAllFaces(teamIndex);
+}
+
+Color getColorForTeam(byte t) {
+  return makeColorHSB(teamHues[t], 255, 255);
 }
 
 
