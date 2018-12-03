@@ -23,7 +23,7 @@
 #define EDGE_FADE_DURAION       500
 #define SPARKLE_OFFSET          80
 #define SPARKLE_DURATION        800
-#define SPARKLE_CYCLE_DURATION  2400
+#define SPARKLE_CYCLE_DURATION  1600
 
 Color displayColor;
 
@@ -48,12 +48,10 @@ void setup() {
 void loop() {
 
   // change team if triple clicked
-  if (buttonMultiClicked()) {
-    if (buttonClickCount() == 3) {
-      teamIndex++;
-      if (teamIndex >= COUNT_OF(teamHues)) {
-        teamIndex = 0;
-      }
+  if (buttonDoubleClicked()) {
+    teamIndex++;
+    if (teamIndex >= COUNT_OF(teamHues)) {
+      teamIndex = 0;
     }
   }
 
