@@ -1,23 +1,19 @@
-/*  Fracture (Game)
-
-    Setup: For 3-6 players. Each player gets 5-6 tiles of a specific color.
-           Game starts will all tiles connected, but completely segregated by color.
-
-    Goal: Get your tiles to be touching only other players tiles.
-          Your tiles must be touching at least two other tiles to feel happily diverse.
-
-    Turns: Start from a player of choice and then go clockwise taking turns.
-           A turn consists of fracturing the population into two sub populations,
-           and then connecting them back together in any way you please.
-
-    When a player has a tile fully diversified, it will blink in unison with other blinking Blinks of its color,
-    first player to have all of their tiles blink wins.
-
-    Game development by: Celia Pearce, Jeanie Choi, Isabella Carlson, Mike Lazer-Walker, Joshua Sloane
-
-    by Jonathan Bobrow
-    9.28.2017
-*/
+/*
+ *  Fracture
+ *  by Move38, Inc. 2019
+ *  Lead development by Jonathan Bobrow, Daniel King
+ *  original game by Celia Pearce, Em Lazer-Walker, Jonathan Bobrow, Joshua Sloane
+ *
+ *  Rules: https://github.com/Move38/Fracture/blob/master/README.md
+ *
+ *  --------------------
+ *  Blinks by Move38
+ *  Brought to life via Kickstarter 2018
+ *
+ *  @madewithblinks
+ *  www.move38.com
+ *  --------------------
+ */
 
 #define HAPPY_FLASH_DURATION    500
 #define EDGE_FADE_DURAION       500
