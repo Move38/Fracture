@@ -117,7 +117,7 @@ void loop() {
 void displayHappy() {
 
   // have the color on the Blink raise and lower to feel more alive
-  byte bri = 204 + sin8_C( (millis() / 14) % 255) / 5; // oscillate between values 204 and 255
+  byte bri = 185 + sin8_C( (millis() / 14) % 255) * 70 / 255; // oscillate between values 185and 255
   setColor(dim(getColorForTeam(teamIndex), bri));
 
   // lets do a celebration on each face in an order
@@ -161,7 +161,7 @@ void displayHappy() {
 
 void displayNotHappy() {
   // have the color on the Blink raise and lower to feel more alive
-  byte bri = 204 + sin8_C( (millis() / 14) % 255) / 5; // oscillate between values 204 and 255
+  byte bri = 185 + sin8_C( (millis() / 14) % 255) * 70 / 255; // oscillate between values 185and 255
   setColor(dim(getColorForTeam(teamIndex), bri));
 }
 
